@@ -1,0 +1,74 @@
+:root {
+    --primary: #4f46e5;
+    --secondary: #10b981;
+    --danger: #ef4444;
+    --dark: #1f2937;
+    --glass: rgba(255, 255, 255, 0.7);
+}
+
+body {
+    background: #f3f4f6;
+    font-family: 'Inter', sans-serif;
+    color: var(--dark);
+    margin: 0;
+    padding: 0;
+}
+
+.mobile-container {
+    padding: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.card {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-secondary { background: var(--secondary); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-available { background: #d1fae5; color: #065f46; }
+.status-borrowed { background: #dbeafe; color: #1e40af; }
+.status-damaged { background: #fee2e2; color: #991b1b; }
+
+/* Mobile Menu */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+}
