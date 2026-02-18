@@ -27,6 +27,16 @@ class Borrowing extends Model
         'accessories_brought_json' => 'array',
     ];
 
+    public function isOverdue()
+    {
+        return $this->returned_at === null && $this->expected_return_at < now();
+    }
+
+    public function scopeOverdue($query)
+    {
+        return $query->whereNull('returned_at')->where('expected_return_at', '<', now());
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -14,7 +14,6 @@ class DashboardController extends Controller
     {
         $activeBorrowings = Borrowing::with(['user', 'equipment'])
             ->whereNull('returned_at')
-            ->where('user_id', auth()->id())
             ->get();
 
         $today = Carbon::today();
@@ -29,6 +28,7 @@ class DashboardController extends Controller
 
         $stats = [
             'active_borrowings' => Borrowing::whereNull('returned_at')->count(),
+            'overdue_borrowings' => Borrowing::overdue()->count(),
             'available_equipment' => Equipment::where('status', 'available')->count(),
             'repair_equipment' => Equipment::where('status', 'in_service')->count(),
             'lost_equipment' => Equipment::where('status', 'lost')->count(),

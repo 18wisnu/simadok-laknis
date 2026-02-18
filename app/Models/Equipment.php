@@ -23,6 +23,11 @@ class Equipment extends Model
         return $this->hasMany(Accessory::class);
     }
 
+    public function currentBorrowing()
+    {
+        return $this->hasOne(Borrowing::class)->whereNull('returned_at')->latestOfMany();
+    }
+
     public function borrowings()
     {
         return $this->hasMany(Borrowing::class);

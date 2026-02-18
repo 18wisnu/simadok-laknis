@@ -7,6 +7,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\RepairController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,6 +16,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
     // Equipments
     Route::get('/equipments/print-qr', [EquipmentController::class, 'printQr'])->name('equipments.print-qr');

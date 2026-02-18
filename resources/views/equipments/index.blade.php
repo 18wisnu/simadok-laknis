@@ -3,64 +3,83 @@
 @section('title', 'Equipment List')
 
 @section('content')
-<div class="space-y-4">
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-gray-800">Daftar Alat</h2>
-        <div class="flex items-center gap-2">
-            <a href="{{ route('equipments.export') }}" class="w-10 h-10 bg-white border border-gray-200 text-emerald-600 rounded-xl flex items-center justify-center hover:bg-emerald-50 transition-colors" title="Ekspor Excel">
-                <i class="fas fa-file-excel"></i>
-            </a>
-            <a href="{{ route('equipments.print-qr') }}" target="_blank" class="w-10 h-10 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center hover:bg-gray-50 transition-colors" title="Cetak QR Code">
-                <i class="fas fa-qrcode"></i>
-            </a>
-            <div class="relative">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" placeholder="Cari alat..." class="pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-32">
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="px-2">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Daftar Alat</h2>
+                <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest mt-0.5">Inventaris & Aset</p>
             </div>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('equipments.export') }}" class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all shadow-sm" title="Ekspor Excel">
+                    <i class="fas fa-file-excel"></i>
+                </a>
+                <a href="{{ route('equipments.print-qr') }}" target="_blank" class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm" title="Cetak QR Code">
+                    <i class="fas fa-qrcode"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative group">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors"></i>
+            <input type="text" placeholder="Cari alat atau serial number..." 
+                class="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 shadow-sm transition-all outline-none"
+                id="searchEquipment">
         </div>
     </div>
 
-    @forelse($equipments as $equipment)
-    <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
-                <i class="fas fa-microchip text-2xl"></i>
-            </div>
-            <div>
-                <h4 class="font-bold text-gray-800">{{ $equipment->name }}</h4>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase 
-                        @if($equipment->status == 'available') bg-emerald-50 text-emerald-600 
-                        @elseif($equipment->status == 'borrowed') bg-blue-50 text-blue-600
-                        @elseif($equipment->status == 'lost') bg-red-50 text-red-600
-                        @else bg-orange-50 text-orange-600 @endif">
-                        @if($equipment->status == 'available') Tersedia 
-                        @elseif($equipment->status == 'borrowed') Dipinjam
-                        @elseif($equipment->status == 'lost') Hilang
-                        @elseif($equipment->status == 'damaged') Rusak
-                        @else Servis @endif
-                    </span>
-                    <span class="text-[10px] text-gray-400">{{ $equipment->accessories_count }} kelengkapan</span>
+    <!-- Equipment Grid -->
+    <div class="grid grid-cols-1 gap-4 mt-8" id="equipmentGrid">
+        @forelse($equipments as $equipment)
+        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100/50 flex items-center justify-between hover:shadow-md transition-all group equipment-card" data-name="{{ strtolower($equipment->name) }}">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors shadow-inner">
+                    <i class="fas fa-microchip text-2xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 text-sm uppercase tracking-tight">{{ $equipment->name }}</h4>
+                    <div class="flex items-center gap-2 mt-1.5 wrap">
+                        <span class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider
+                            @if($equipment->status == 'available') bg-emerald-50 text-emerald-600 border border-emerald-100
+                            @elseif($equipment->status == 'borrowed') bg-blue-50 text-blue-600 border border-blue-100
+                            @elseif($equipment->status == 'lost') bg-red-50 text-red-600 border border-red-100
+                            @else bg-orange-50 text-orange-600 border border-orange-100 @endif">
+                            @if($equipment->status == 'available') Tersedia 
+                            @elseif($equipment->status == 'borrowed') 
+                                Dipinjam 
+                                @if($equipment->currentBorrowing) 
+                                    • {{ explode(' ', $equipment->currentBorrowing->user->name)[0] }}
+                                @endif
+                            @elseif($equipment->status == 'lost') Hilang
+                            @elseif($equipment->status == 'damaged') Rusak
+                            @else Servis @endif
+                        </span>
+                        <span class="text-[9px] text-gray-400 font-bold uppercase">{{ $equipment->accessories_count }} item</span>
+                    </div>
                 </div>
             </div>
+            <div class="flex items-center gap-2">
+                @if(auth()->user()->isAdmin())
+                <button onclick='openEditEquipmentModal({!! json_encode($equipment) !!})' class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center hover:bg-white hover:shadow-md hover:text-indigo-600 transition-all border border-transparent hover:border-indigo-100">
+                    <i class="fas fa-edit text-xs"></i>
+                </button>
+                @endif
+                <a href="{{ route('equipments.show', $equipment) }}" class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center hover:bg-shadow-lg hover:shadow-indigo-100 transition-all active:scale-90">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </a>
+            </div>
         </div>
-        <div class="flex items-center gap-2">
-            @if(auth()->user()->isAdmin())
-            <button onclick='openEditEquipmentModal({!! json_encode($equipment) !!})' class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
-                <i class="fas fa-edit"></i>
-            </button>
-            @endif
-            <a href="{{ route('equipments.show', $equipment) }}" class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center hover:bg-indigo-100 transition-colors">
-                <i class="fas fa-chevron-right"></i>
-            </a>
+        @empty
+        <div class="text-center py-24 bg-white rounded-[2rem] border border-dashed border-gray-200">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-box-open text-3xl text-gray-200"></i>
+            </div>
+            <p class="text-sm text-gray-400 font-medium">Belum ada alat yang terdaftar.</p>
         </div>
+        @endforelse
     </div>
-    @empty
-    <div class="text-center py-20 text-gray-400 italic">
-        <i class="fas fa-box-open text-4xl mb-3 opacity-20"></i>
-        <p class="text-sm">Belum ada alat yang terdaftar.</p>
-    </div>
-    @endforelse
 
     <!-- Floating Action Button -->
     <button onclick="openAddModal()" class="fixed bottom-24 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-xl shadow-indigo-200 flex items-center justify-center text-2xl active:scale-95 transition-all z-40">
@@ -206,5 +225,18 @@
         modal.querySelector('div').classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
+
+    // Search Filtering
+    document.getElementById('searchEquipment').addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('.equipment-card').forEach(card => {
+            const name = card.getAttribute('data-name');
+            if (name.includes(query)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
 </script>
 @endsection

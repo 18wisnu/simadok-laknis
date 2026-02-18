@@ -7,133 +7,197 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-8">
+    <!-- Header Summary -->
+    <div class="px-2">
+        <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-[0.2em] mb-1">Status Hari Ini</p>
+        <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Ringkasan Operasional</h2>
+    </div>
+
     <!-- Stats Grid -->
     <div class="grid grid-cols-2 gap-4">
-        <div class="bg-indigo-600 p-4 rounded-3xl text-white shadow-lg">
-            <div class="flex items-center justify-between mb-2">
-                <i class="fas fa-hand-holding-heart text-2xl opacity-50"></i>
-                <span class="text-xs font-bold uppercase tracking-wider">Aktif</span>
+        <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 p-5 rounded-[2rem] text-white shadow-xl shadow-indigo-100 relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="flex items-center justify-between mb-3 relative z-10">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md">
+                    <i class="fas fa-hand-holding-heart text-lg"></i>
+                </div>
+                <span class="text-[9px] font-bold uppercase tracking-widest opacity-80">Aktif</span>
             </div>
-            <div class="text-3xl font-bold">{{ $activeBorrowings->count() }}</div>
-            <div class="text-[10px] opacity-70">Alat dipinjam</div>
+            <div class="text-4xl font-bold relative z-10">{{ $stats['active_borrowings'] }}</div>
+            <p class="text-[10px] opacity-70 mt-1 font-medium italic">Alat di tangan tim</p>
         </div>
-        <div class="bg-white p-4 rounded-3xl shadow-md border border-gray-100">
-            <div class="flex items-center justify-between mb-2">
-                <i class="fas fa-tools text-2xl text-orange-400 opacity-50"></i>
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Servis</span>
+        
+        @if($stats['overdue_borrowings'] > 0)
+        <div class="bg-gradient-to-br from-red-500 to-red-600 p-5 rounded-[2rem] text-white shadow-xl shadow-red-100 animate-pulse relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-white/10 rounded-full blur-2xl"></div>
+            <div class="flex items-center justify-between mb-3 relative z-10">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md text-white">
+                    <i class="fas fa-triangle-exclamation text-lg"></i>
+                </div>
+                <span class="text-[9px] font-bold uppercase tracking-widest opacity-80 italic">Urgent</span>
             </div>
-            <div class="text-3xl font-bold text-gray-800">{{ $stats['repair_equipment'] ?? 0 }}</div>
-            <div class="text-[10px] text-gray-400">Unit dalam perbaikan</div>
+            <div class="text-4xl font-bold relative z-10">{{ $stats['overdue_borrowings'] }}</div>
+            <p class="text-[10px] opacity-90 mt-1 font-bold">Harus segera kembali!</p>
+        </div>
+        @else
+        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+                <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500">
+                    <i class="fas fa-screwdriver-wrench text-lg"></i>
+                </div>
+                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Servis</span>
+            </div>
+            <div>
+                <div class="text-3xl font-bold text-gray-800">{{ $stats['repair_equipment'] ?? 0 }}</div>
+                <p class="text-[10px] text-gray-400 mt-1 font-medium">Unit dalam perbaikan</p>
+            </div>
+        </div>
+        @endif
+    </div>
+
+    <!-- QR Scan Quick Action -->
+    <div class="relative group">
+        <div class="absolute inset-0 bg-emerald-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity rounded-3xl"></div>
+        <div class="bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 p-6 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 relative overflow-hidden flex items-center justify-between">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="relative z-10">
+                <h3 class="text-xl font-bold tracking-tight">Quick Scan</h3>
+                <p class="text-xs opacity-90 mt-0.5">Pinjam atau cek status alat instan</p>
+            </div>
+            <button onclick="startScanner()" class="w-14 h-14 bg-white text-emerald-600 rounded-2xl flex items-center justify-center shadow-lg active:scale-95 transition-all hover:rotate-12">
+                <i class="fas fa-qrcode text-3xl"></i>
+            </button>
         </div>
     </div>
 
     <!-- Usage Trend Chart -->
-    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Tren Pemakaian Alat</h3>
-            <span class="text-[10px] text-gray-400 font-bold uppercase">6 Bulan Terakhir</span>
+    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100/50">
+        <div class="flex items-center justify-between mb-8 px-1">
+            <div>
+                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-widest">Aktivitas Pinjaman</h3>
+                <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Status: Normal</p>
+            </div>
+            <div class="bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                <span class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">6 Bulan Terakhir</span>
+            </div>
         </div>
-        <div class="h-40">
+        <div class="h-44">
             <canvas id="usageChart"></canvas>
         </div>
     </div>
 
-    <!-- QR Scan Quick Action -->
-    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 p-6 rounded-3xl text-white shadow-xl flex items-center justify-between">
-        <div>
-            <h3 class="text-lg font-bold">Pinjam Mudah</h3>
-            <p class="text-xs opacity-80">Scan QR Code untuk mulai</p>
-        </div>
-        <button onclick="startScanner()" class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center hover:bg-white/30 transition-colors">
-            <i class="fas fa-qrcode text-2xl"></i>
-        </button>
-    </div>
-
     <!-- Upcoming Schedules -->
-    <div class="space-y-3">
+    <div class="space-y-4">
         <div class="flex items-center justify-between px-2">
-            <h2 class="text-lg font-bold text-gray-800">Jadwal Liputan</h2>
-            <a href="{{ route('schedules.index') }}" class="text-xs font-semibold text-indigo-600">Lihat Semua</a>
+            <div>
+                <h2 class="text-lg font-bold text-gray-800">Jadwal Terdekat</h2>
+                <p class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Liputan Minggu Ini</p>
+            </div>
+            <a href="{{ route('schedules.index') }}" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-xl hover:bg-indigo-600 hover:text-white transition-all uppercase tracking-wider">Lihat Semua</a>
         </div>
-        @forelse($upcomingSchedules as $schedule)
-        <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-2">
-                    <div class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
-                        {{ \Carbon\Carbon::parse($schedule->starts_at)->format('H:i') }}
+        
+        <div class="grid grid-cols-1 gap-4">
+            @forelse($upcomingSchedules as $schedule)
+            <div class="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-2 h-full {{ $schedule->result_status !== 'pending' ? 'bg-emerald-500' : 'bg-indigo-500' }} opacity-20"></div>
+                
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="text-xs font-bold text-indigo-600 bg-indigo-50 px-4 py-1.5 rounded-2xl border border-indigo-100">
+                            {{ \Carbon\Carbon::parse($schedule->starts_at)->format('H:i') }}
+                        </div>
+                        @if($schedule->result_status !== 'pending')
+                        <span class="text-[9px] font-bold uppercase py-1 px-3 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 italic flex items-center gap-1">
+                            <i class="fas fa-check-circle"></i> Selesai
+                        </span>
+                        @endif
                     </div>
-                    @if($schedule->result_status !== 'pending')
-                    <span class="text-[10px] font-bold uppercase py-1 px-3 rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-100 italic">
-                        <i class="fas fa-check-circle mr-1"></i> Selesai
-                    </span>
+                    <div class="flex -space-x-2">
+                        @foreach($schedule->users as $officer)
+                        <img class="h-7 w-7 rounded-lg ring-2 ring-white object-cover shadow-sm bg-gray-200" 
+                             src="{{ $officer->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($officer->name).'&background=random' }}" 
+                             alt="{{ $officer->name }}">
+                        @endforeach
+                    </div>
+                </div>
+                
+                <h4 class="font-bold text-gray-800 text-base leading-tight">{{ $schedule->title }}</h4>
+                
+                <div class="flex flex-wrap items-center gap-y-2 gap-x-4 mt-4 py-3 border-t border-gray-50">
+                    <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
+                        <i class="fas fa-location-dot text-indigo-400"></i> {{ $schedule->location }}
+                    </div>
+                    
+                    @if($schedule->equipment)
+                    <div class="flex items-center gap-1.5 text-[10px] font-bold {{ $schedule->equipment->status == 'available' ? 'text-emerald-500' : 'text-orange-500' }}">
+                        <i class="fas fa-camera-retro"></i>
+                        <span class="uppercase tracking-tighter">{{ $schedule->equipment->status == 'available' ? 'Alat Kembali' : 'Dibawa Tim' }}</span>
+                    </div>
                     @endif
                 </div>
-                <div class="flex -space-x-1">
-                    @foreach($schedule->users as $officer)
-                    <img class="h-6 w-6 rounded-full ring-2 ring-white object-cover shadow-sm" src="{{ $officer->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($officer->name) }}" alt="{{ $officer->name }}">
-                    @endforeach
-                </div>
             </div>
-            <h4 class="font-bold text-gray-800">{{ $schedule->title }}</h4>
-            <div class="flex flex-wrap items-center gap-4 mt-2">
-                <div class="flex items-center gap-1.5 text-[10px] text-gray-400">
-                    <i class="fas fa-map-marker-alt"></i> {{ $schedule->location }}
-                </div>
-                
-                @if($schedule->equipment)
-                <div class="flex items-center gap-1.5 text-[10px] font-bold {{ $schedule->equipment->status == 'available' ? 'text-emerald-500' : 'text-orange-500' }}">
-                    <i class="fas fa-camera-retro"></i>
-                    {{ $schedule->equipment->status == 'available' ? 'Alat Sudah Kembali' : 'Alat Belum Kembali' }}
-                </div>
-                @endif
-                
-                @if($schedule->result_status !== 'pending')
-                <div class="flex items-center gap-1.5 text-[10px] font-bold text-indigo-500">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    @php
-                        $statusLabels = [
-                            'backed_up' => 'File Sudah disalin (Backup)',
-                            'moved' => 'File Sudah dipindah',
-                            'archived' => 'File Sudah diarsip',
-                            'success' => 'Kegiatan Selesai'
-                        ];
-                    @endphp
-                    {{ $statusLabels[$schedule->result_status] ?? 'Data Tersimpan' }}
-                </div>
-                @endif
+            @empty
+            <div class="text-center py-10 bg-white rounded-[2rem] border border-dashed border-gray-200 text-gray-400">
+                <i class="fas fa-calendar-alt text-3xl opacity-10 mb-2"></i>
+                <p class="text-xs italic font-medium">Belum ada jadwal liputan terdekat.</p>
             </div>
+            @endforelse
         </div>
-        @empty
-        <div class="text-center py-6 bg-gray-50 rounded-3xl border border-dashed border-gray-200 text-gray-400">
-            <p class="text-xs">Tidak ada jadwal terdekat.</p>
-        </div>
-        @endforelse
     </div>
 
     <!-- Active Borrowings -->
-    <div class="space-y-3">
+    <div class="space-y-4">
         <div class="flex items-center justify-between px-2">
-            <h2 class="text-lg font-bold text-gray-800">Peminjaman Aktif</h2>
-            <a href="#" class="text-xs font-semibold text-indigo-600">Lihat Semua</a>
-        </div>
-        @forelse($activeBorrowings as $borrowing)
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
-                <i class="fas fa-laptop text-xl"></i>
+            <div>
+                <h2 class="text-lg font-bold text-gray-800">Log Penguasaan Alat</h2>
+                <p class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Status Peminjaman Aktif</p>
             </div>
-            <div class="flex-1">
-                <h4 class="font-bold text-gray-800 text-sm">{{ $borrowing->equipment->name }}</h4>
-                <p class="text-xs text-gray-400">{{ \Carbon\Carbon::parse($borrowing->borrowed_at)->diffForHumans() }}</p>
+            <a href="{{ route('equipments.index') }}" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-xl hover:bg-indigo-600 hover:text-white transition-all uppercase tracking-wider">Lihat Semua</a>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3">
+            @forelse($activeBorrowings as $borrowing)
+            <div class="p-5 rounded-[2rem] shadow-sm border transition-all duration-300 {{ $borrowing->isOverdue() ? 'bg-red-50 border-red-100 shadow-red-50' : 'bg-white border-gray-100 hover:shadow-md' }} flex items-center gap-4">
+                <div class="w-14 h-14 {{ $borrowing->isOverdue() ? 'bg-red-100 text-red-600' : 'bg-indigo-50 text-indigo-600' }} rounded-2xl flex items-center justify-center shadow-inner">
+                    <i class="fas fa-camera-retro text-2xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <h4 class="font-bold text-gray-800 text-sm truncate uppercase tracking-tight">{{ $borrowing->equipment->name }}</h4>
+                        @if($borrowing->isOverdue())
+                        <span class="bg-red-600 text-white text-[7px] font-black px-2 py-0.5 rounded-full animate-pulse uppercase tracking-[0.1em]">Overdue</span>
+                        @endif
+                    </div>
+                    <p class="text-[10px] {{ $borrowing->isOverdue() ? 'text-red-500' : 'text-gray-500' }} font-bold uppercase tracking-tight">Peminjam: <span class="{{ $borrowing->isOverdue() ? 'text-red-700' : 'text-indigo-600' }}">{{ $borrowing->user->name }}</span></p>
+                    <div class="flex items-center gap-3 mt-1.5">
+                        <div class="flex items-center gap-1 text-[9px] text-gray-400">
+                            <i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($borrowing->borrowed_at)->diffForHumans() }}
+                        </div>
+                        @if($borrowing->isOverdue())
+                        <div class="flex items-center gap-1 text-[9px] text-red-400 font-bold animate-pulse">
+                            <i class="fas fa-calendar-xmark"></i> {{ $borrowing->expected_return_at->format('d M, H:i') }}
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                @if(auth()->id() == $borrowing->user_id || auth()->user()->isAdmin())
+                <button onclick="openReturnModal({{ $borrowing->id }}, '{{ $borrowing->equipment->name }}')" 
+                        class="{{ $borrowing->isOverdue() ? 'bg-red-600 text-white' : 'bg-indigo-600 text-white' }} p-3 rounded-2xl shadow-lg transition-transform active:scale-90 flex items-center justify-center">
+                    <i class="fas fa-arrow-rotate-left"></i>
+                </button>
+                @endif
             </div>
-            <button onclick="openReturnModal({{ $borrowing->id }}, '{{ $borrowing->equipment->name }}')" class="bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg text-xs font-bold">Kembalikan</button>
+            @empty
+            <div class="text-center py-12 bg-white rounded-[2rem] border border-dashed border-gray-200">
+                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-circle-check text-2xl text-gray-200"></i>
+                </div>
+                <p class="text-sm text-gray-400 font-medium">Semua alat sudah di rak kembali.</p>
+            </div>
+            @endforelse
         </div>
-        @empty
-        <div class="text-center py-8 text-gray-400">
-            <i class="fas fa-check-circle text-4xl mb-2 opacity-20"></i>
-            <p class="text-sm">Tidak ada peminjaman aktif</p>
-        </div>
-        @endforelse
+    </div>
     <!-- Admin Quick Actions -->
     @if(auth()->user()->isSuperAdmin())
     <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
