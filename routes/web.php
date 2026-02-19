@@ -9,6 +9,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -23,6 +25,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/equipments/export', [EquipmentController::class, 'export'])->name('equipments.export');
     Route::resource('equipments', EquipmentController::class);
     
+    // Temporary Fix Route - Remove after use
+    Route::get('/fix-db', function() {
+        try {
+            // 1. Add equipment_id to schedules if missing
+            if (!Schema::hasColumn('schedules', 'equipment_id')) {
+                Schema::table('schedules', function (Blueprint $table) {
+                    $table->foreignId('equipment_id')->nullable()->after('ends_at')->constrained('equipment')->nullOnDelete();
+                });
+                echo "Success: equipment_id added to schedules.<br>";
+            } else {
+                echo "Info: equipment_id already exists in schedules.<br>";
+            }
+
+            // 2. Make starts_at and ends_at nullable
+            Schema::table('schedules', function (Blueprint $table) {
+                $table->timestamp('starts_at')->nullable()->change();
+                $table->timestamp('ends_at')->nullable()->change();
+            });
+            echo "Success: starts_at and ends_at are now nullable.<br>";
+
+            return "Database fix completed successfully!";
+        } catch (\Exception $e) {
+            return "Error: " . $e->getMessage();
+        }
+    });
+
     // Borrowings
     Route::post('/borrowings', [BorrowingController::class, 'store'])->name('borrowings.store');
     Route::patch('/borrowings/{borrowing}/return', [BorrowingController::class, 'return'])->name('borrowings.return');
