@@ -83,6 +83,17 @@
                         <option value="superadmin" {{ $user->role === 'superadmin' ? 'selected' : '' }}>SUPERADMIN</option>
                     </select>
                 </form>
+
+                <!-- Delete User -->
+                @if($user->id !== auth()->id())
+                <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini? Tindakan ini tidak dapat dibatalkan.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="p-3 rounded-2xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="Hapus User">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+                @endif
             </div>
         </div>
         @endforeach

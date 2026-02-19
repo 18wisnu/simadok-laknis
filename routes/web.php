@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/users/{user}/status', [UserController::class, 'toggleStatus'])->name('users.status');
     Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
     Route::patch('/users/{user}/password', [UserController::class, 'resetPassword'])->name('users.password');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     // Audit Logs
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
