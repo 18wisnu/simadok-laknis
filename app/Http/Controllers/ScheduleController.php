@@ -40,7 +40,7 @@ class ScheduleController extends Controller
     {
         $validated = $request->validate([
             'result_status' => 'required|in:backed_up,moved,archived,success',
-            'result_link' => 'nullable|url',
+            'result_link' => 'nullable|string|max:1000',
             'return_equipment' => 'nullable|boolean',
         ]);
 
@@ -71,10 +71,8 @@ class ScheduleController extends Controller
 
     public function update(Request $request, Schedule $schedule)
     {
-        if (!auth()->user()->isAdmin()) {
-            abort(403);
-        }
-
+        // Allowed for all authenticated users now
+        
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',

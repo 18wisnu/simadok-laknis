@@ -108,29 +108,33 @@
                             {{ \Carbon\Carbon::parse($schedule->starts_at)->format('H:i') }}
                         </div>
                         @if($schedule->result_status !== 'pending')
-                        <span class="text-[9px] font-bold uppercase py-1 px-3 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 italic flex items-center gap-1">
+                        <span class="text-[10px] font-bold uppercase py-1 px-3 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 italic flex items-center gap-1">
                             <i class="fas fa-check-circle"></i> Selesai
                         </span>
                         @endif
                     </div>
-                    <div class="flex -space-x-2">
-                        @foreach($schedule->users as $officer)
-                        <img class="h-7 w-7 rounded-lg ring-2 ring-white object-cover shadow-sm bg-gray-200" 
-                             src="{{ $officer->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($officer->name).'&background=random' }}" 
-                             alt="{{ $officer->name }}">
-                        @endforeach
-                    </div>
                 </div>
                 
-                <h4 class="font-bold text-gray-800 text-base leading-tight">{{ $schedule->title }}</h4>
+                <h4 class="font-bold text-gray-800 text-lg leading-tight mb-3">{{ $schedule->title }}</h4>
+
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    @foreach($schedule->users as $officer)
+                    <div class="flex items-center gap-2 bg-gray-50 pr-3 rounded-full border border-gray-100 py-0.5">
+                        <img class="h-8 w-8 rounded-full object-cover shadow-sm bg-gray-200" 
+                             src="{{ $officer->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($officer->name).'&background=random' }}" 
+                             alt="{{ $officer->name }}">
+                        <span class="text-xs font-bold text-gray-600 truncate max-w-[80px]">{{ explode(' ', $officer->name)[0] }}</span>
+                    </div>
+                    @endforeach
+                </div>
                 
-                <div class="flex flex-wrap items-center gap-y-2 gap-x-4 mt-4 py-3 border-t border-gray-50">
-                    <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
+                <div class="flex flex-wrap items-center gap-y-2 gap-x-4 mt-4 py-4 border-t border-gray-50">
+                    <div class="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
                         <i class="fas fa-location-dot text-indigo-400"></i> {{ $schedule->location }}
                     </div>
                     
                     @if($schedule->equipment)
-                    <div class="flex items-center gap-1.5 text-[10px] font-bold {{ $schedule->equipment->status == 'available' ? 'text-emerald-500' : 'text-orange-500' }}">
+                    <div class="flex items-center gap-1.5 text-xs font-bold {{ $schedule->equipment->status == 'available' ? 'text-emerald-500' : 'text-orange-500' }}">
                         <i class="fas fa-camera-retro"></i>
                         <span class="uppercase tracking-tighter">{{ $schedule->equipment->status == 'available' ? 'Alat Kembali' : 'Dibawa Tim' }}</span>
                     </div>
