@@ -88,8 +88,9 @@
 </div>
 
 <!-- Edit Equipment Modal -->
-<div id="editModal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-6 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl scale-95 transition-all duration-300">
+<div id="editModal" class="fixed inset-0 z-[110] hidden bg-black/50 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl scale-95 transition-all duration-300 my-8">
         <h3 class="text-xl font-bold text-gray-800 mb-6">Edit Data Alat</h3>
         
         <form id="editForm" method="POST" class="space-y-4">
@@ -136,12 +137,14 @@
                 </button>
             </div>
         </form>
+        </div>
     </div>
 </div>
 
 <!-- Add Equipment Modal -->
-<div id="addModal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-6 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl scale-95 transition-all duration-300">
+<div id="addModal" class="fixed inset-0 z-[110] hidden bg-black/50 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl scale-95 transition-all duration-300 my-8">
         <h3 class="text-xl font-bold text-gray-800 mb-6">Tambah Alat Baru</h3>
         
         <form action="{{ route('equipments.store') }}" method="POST" class="space-y-4">
@@ -191,6 +194,7 @@
                 </button>
             </div>
         </form>
+        </div>
     </div>
 </div>
 
@@ -198,12 +202,12 @@
     function openAddModal() {
         const modal = document.getElementById('addModal');
         modal.classList.remove('hidden');
-        setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+        setTimeout(() => modal.querySelector('.bg-white').classList.remove('scale-95'), 10);
     }
 
     function closeAddModal() {
         const modal = document.getElementById('addModal');
-        modal.querySelector('div').classList.add('scale-95');
+        modal.querySelector('.bg-white').classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
@@ -217,12 +221,12 @@
         
         const modal = document.getElementById('editModal');
         modal.classList.remove('hidden');
-        setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+        setTimeout(() => modal.querySelector('.bg-white').classList.remove('scale-95'), 10);
     }
 
     function closeEditEquipmentModal() {
         const modal = document.getElementById('editModal');
-        modal.querySelector('div').classList.add('scale-95');
+        modal.querySelector('.bg-white').classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
 

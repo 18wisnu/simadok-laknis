@@ -221,8 +221,9 @@
 </div>
 
 <!-- Return Modal -->
-<div id="returnModal" class="fixed inset-0 bg-black/50 z-[110] hidden flex items-center justify-center p-6 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl scale-95 transition-all duration-300">
+<div id="returnModal" class="fixed inset-0 z-[110] hidden bg-black/50 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-screen flex items-center justify-center p-4 text-center">
+        <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl scale-95 transition-all duration-300 my-8 text-left">
         <h3 class="text-xl font-bold text-gray-800 mb-2">Kembalikan Alat</h3>
         <p id="returnItemName" class="text-sm text-gray-400 mb-6 font-medium"></p>
         
@@ -246,11 +247,12 @@
                 </button>
             </div>
         </form>
+        </div>
     </div>
 </div>
 
 <!-- Simple Scanner Modal Placeholder -->
-<div id="scannerModal" class="fixed inset-0 z-[100] bg-black/90 hidden flex flex-col items-center justify-center p-6 text-white">
+<div id="scannerModal" class="fixed inset-0 z-[120] bg-black/90 hidden flex flex-col items-center justify-center p-6 text-white">
     <div class="w-full max-w-xs aspect-square border-2 border-dashed border-white/50 rounded-3xl mb-8 flex items-center justify-center overflow-hidden bg-gray-900">
         <div id="reader" width="600px"></div>
     </div>
@@ -333,12 +335,12 @@
         document.getElementById('returnForm').action = `/borrowings/${id}/return`;
         const modal = document.getElementById('returnModal');
         modal.classList.remove('hidden');
-        setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+        setTimeout(() => modal.querySelector('.bg-white').classList.remove('scale-95'), 10);
     }
 
     function closeReturnModal() {
         const modal = document.getElementById('returnModal');
-        modal.querySelector('div').classList.add('scale-95');
+        modal.querySelector('.bg-white').classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
 </script>
