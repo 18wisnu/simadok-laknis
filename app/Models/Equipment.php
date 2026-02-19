@@ -44,4 +44,9 @@ class Equipment extends Model
                     ->where('model_type', get_class($this))
                     ->orderBy('created_at', 'desc');
     }
+
+    public function getRouteKeyName()
+    {
+        return 'qr_code_identifier';
+    }
 }

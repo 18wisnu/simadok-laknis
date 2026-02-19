@@ -107,26 +107,35 @@
         <form action="{{ route('schedules.store') }}" method="POST" class="space-y-4">
             @csrf
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Kegiatan</label>
-                <input type="text" name="title" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Contoh: Liputan HUT Kota">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Kegiatan <span class="text-red-500">*</span></label>
+                <input type="text" name="title" value="{{ old('title') }}" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('title') border-red-300 @enderror" placeholder="Contoh: Liputan HUT Kota">
+                @error('title')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Lokasi</label>
-                <input type="text" name="location" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Contoh: Alun-alun">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Lokasi <span class="text-red-500">*</span></label>
+                <input type="text" name="location" value="{{ old('location') }}" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('location') border-red-300 @enderror" placeholder="Contoh: Alun-alun">
+                @error('location')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
             
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Waktu Mulai</label>
-                <input type="datetime-local" name="starts_at" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Waktu Mulai <span class="text-red-500">*</span></label>
+                <input type="datetime-local" name="starts_at" value="{{ old('starts_at') }}" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('starts_at') border-red-300 @enderror">
+                @error('starts_at')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Petugas Peliput (Bisa pilih > 1)</label>
-                <div class="grid grid-cols-1 gap-2 mt-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded-2xl border border-gray-100">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Petugas Peliput <span class="text-red-500">*</span></label>
+                <div class="grid grid-cols-1 gap-2 mt-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded-2xl border border-gray-100 @error('user_ids') border-red-300 @enderror">
                     @foreach($users ?? [] as $user)
                     <label class="flex items-center gap-3 p-2 hover:bg-white rounded-xl transition-colors cursor-pointer group">
-                        <input type="checkbox" name="user_ids[]" value="{{ $user->id }}" class="w-5 h-5 rounded-lg border-gray-200 text-indigo-600 focus:ring-indigo-500">
+                        <input type="checkbox" name="user_ids[]" value="{{ $user->id }}" class="w-5 h-5 rounded-lg border-gray-200 text-indigo-600 focus:ring-indigo-500" {{ is_array(old('user_ids')) && in_array($user->id, old('user_ids')) ? 'checked' : '' }}>
                         <div class="flex items-center gap-2">
                             <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name) }}" class="w-6 h-6 rounded-full object-cover">
                             <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors">{{ $user->name }}</span>
@@ -134,6 +143,9 @@
                     </label>
                     @endforeach
                 </div>
+                @error('user_ids')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -141,7 +153,7 @@
                 <select name="equipment_id" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
                     <option value="">-- Tanpa Alat --</option>
                     @foreach($equipments ?? [] as $equipment)
-                    <option value="{{ $equipment->id }}">{{ $equipment->name }} ({{ $equipment->serial_number }})</option>
+                    <option value="{{ $equipment->id }}" {{ old('equipment_id') == $equipment->id ? 'selected' : '' }}>{{ $equipment->name }} ({{ $equipment->serial_number }})</option>
                     @endforeach
                 </select>
             </div>
@@ -159,6 +171,7 @@
                     Batal
                 </button>
             </div>
+        </form>
         </div>
     </div>
 </div>
@@ -225,6 +238,7 @@
                     Batal
                 </button>
             </div>
+        </form>
         </div>
     </div>
 </div>
@@ -304,6 +318,18 @@
             form.submit();
         }
     }
+
+    // Handle validation errors by re-opening modals
+    @if($errors->any())
+        @if(old('_method') == 'PATCH')
+            // This is tricky because we need the context for edit, 
+            // but store is easier. Most failures expect store.
+        @else
+            window.addEventListener('DOMContentLoaded', () => {
+                openAddModal();
+            });
+        @endif
+    @endif
 </script>
 
 <!-- Update Result Modal -->

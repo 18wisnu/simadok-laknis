@@ -65,7 +65,7 @@
                 <h3 class="text-xl font-bold tracking-tight">Quick Scan</h3>
                 <p class="text-xs opacity-90 mt-0.5">Pinjam atau cek status alat instan</p>
             </div>
-            <button onclick="startScanner()" class="w-14 h-14 bg-white text-emerald-600 rounded-2xl flex items-center justify-center shadow-lg active:scale-95 transition-all hover:rotate-12">
+            <button onclick="startScanner()" class="relative z-20 w-14 h-14 bg-white text-emerald-600 rounded-2xl flex items-center justify-center shadow-lg active:scale-95 transition-all hover:rotate-12">
                 <i class="fas fa-qrcode text-3xl"></i>
             </button>
         </div>
@@ -326,8 +326,11 @@
 
     function onScanSuccess(decodedText, decodedResult) {
         // Redirect to equipment show page using the scanned QR code identifier
-        window.location.href = `/equipments/${decodedText}`;
-        stopScanner();
+        // Ensure decodedText is not empty or just whitespace
+        if (decodedText.trim() !== "") {
+            window.location.href = `/equipments/${encodeURIComponent(decodedText.trim())}`;
+            stopScanner();
+        }
     }
 
     function openReturnModal(id, name) {

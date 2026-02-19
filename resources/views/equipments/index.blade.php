@@ -212,7 +212,7 @@
     }
 
     function openEditEquipmentModal(equipment) {
-        document.getElementById('editForm').action = `/equipments/${equipment.id}`;
+        document.getElementById('editForm').action = `/equipments/${equipment.qr_code_identifier}`;
         document.getElementById('edit_name').value = equipment.name;
         document.getElementById('edit_serial_number').value = equipment.serial_number;
         document.getElementById('edit_qr_code_identifier').value = equipment.qr_code_identifier;
