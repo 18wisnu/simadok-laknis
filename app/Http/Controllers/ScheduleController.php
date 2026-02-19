@@ -23,15 +23,15 @@ class ScheduleController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'location' => 'required|string|max:255',
-            'starts_at' => 'required|date',
+            'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after_or_equal:starts_at',
-            'user_ids' => 'required|array',
+            'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
             'equipment_id' => 'nullable|exists:equipment,id',
         ]);
 
-        $schedule = Schedule::create($validated);
-        $schedule->users()->sync($request->user_ids);
+        $schedule = Schedule::create($request->except('user_ids'));
+        $schedule->users()->sync($request->input('user_ids', []));
 
         return redirect()->route('schedules.index')->with('success', 'Jadwal berhasil ditambahkan');
     }
@@ -79,15 +79,15 @@ class ScheduleController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'location' => 'required|string|max:255',
-            'starts_at' => 'required|date',
+            'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after_or_equal:starts_at',
-            'user_ids' => 'required|array',
+            'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
             'equipment_id' => 'nullable|exists:equipment,id',
         ]);
 
-        $schedule->update($validated);
-        $schedule->users()->sync($request->user_ids);
+        $schedule->update($request->except('user_ids'));
+        $schedule->users()->sync($request->input('user_ids', []));
 
         return redirect()->back()->with('success', 'Jadwal berhasil diperbarui');
     }

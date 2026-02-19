@@ -123,15 +123,15 @@
             </div>
             
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Waktu Mulai <span class="text-red-500">*</span></label>
-                <input type="datetime-local" name="starts_at" value="{{ old('starts_at') }}" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('starts_at') border-red-300 @enderror">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Waktu Mulai (Opsional)</label>
+                <input type="datetime-local" name="starts_at" value="{{ old('starts_at') }}" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('starts_at') border-red-300 @enderror">
                 @error('starts_at')
                     <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Petugas Peliput <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Petugas Peliput (Opsional)</label>
                 <div class="grid grid-cols-1 gap-2 mt-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded-2xl border border-gray-100 @error('user_ids') border-red-300 @enderror">
                     @foreach($users ?? [] as $user)
                     <label class="flex items-center gap-3 p-2 hover:bg-white rounded-xl transition-colors cursor-pointer group">
@@ -196,12 +196,12 @@
             </div>
             
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Waktu Mulai</label>
-                <input type="datetime-local" name="starts_at" id="edit_starts_at" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Waktu Mulai (Opsional)</label>
+                <input type="datetime-local" name="starts_at" id="edit_starts_at" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Petugas Peliput</label>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Petugas Peliput (Opsional)</label>
                 <div class="grid grid-cols-1 gap-2 mt-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded-2xl border border-gray-100">
                     @foreach($users ?? [] as $user)
                     <label class="flex items-center gap-3 p-2 hover:bg-white rounded-xl transition-colors cursor-pointer group">
