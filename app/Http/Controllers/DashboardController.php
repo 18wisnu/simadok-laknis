@@ -18,12 +18,16 @@ class DashboardController extends Controller
 
         $today = Carbon::today();
         $upcomingSchedules = Schedule::with(['users', 'equipment'])
-            ->whereDate('starts_at', $today)
-            ->orWhere(function($query) {
-                $query->where('starts_at', '>', Carbon::now())
-                      ->where('starts_at', '<', Carbon::now()->today()->addDays(7));
+            ->where(function($query) use ($today) {
+                $query->whereDate('starts_at', $today)
+                      ->orWhere(function($q) {
+                          $q->where('starts_at', '>', Carbon::now())
+                            ->where('starts_at', '<', Carbon::now()->today()->addDays(7));
+                      })
+                      ->orWhereNull('starts_at');
             })
-            ->orderBy('starts_at', 'asc')
+            ->where('result_status', 'pending')
+            ->orderByRaw('starts_at IS NULL, starts_at ASC')
             ->get();
 
         $stats = [
