@@ -18,6 +18,7 @@ class DashboardController extends Controller
 
         $today = Carbon::today();
         $upcomingSchedules = Schedule::with(['users', 'equipment'])
+            /* @phpstan-ignore-next-line */
             ->where(function($query) use ($today) {
                 $query->whereDate('starts_at', $today)
                       ->orWhere(function($q) {

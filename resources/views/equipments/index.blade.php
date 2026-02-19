@@ -98,34 +98,49 @@
             @method('PATCH')
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Nama Alat</label>
-                <input type="text" name="name" id="edit_name" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                <input type="text" name="name" id="edit_name" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('name') border-red-300 @enderror">
+                @error('name')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
             
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Serial Number</label>
-                    <input type="text" name="serial_number" id="edit_serial_number" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <input type="text" name="serial_number" id="edit_serial_number" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('serial_number') border-red-300 @enderror">
+                    @error('serial_number')
+                        <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-2">QR Identifier</label>
-                    <input type="text" name="qr_code_identifier" id="edit_qr_code_identifier" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <input type="text" name="qr_code_identifier" id="edit_qr_code_identifier" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('qr_code_identifier') border-red-300 @enderror">
+                    @error('qr_code_identifier')
+                        <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Status</label>
-                <select name="status" id="edit_status" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                <select name="status" id="edit_status" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('status') border-red-300 @enderror">
                     <option value="available">Tersedia</option>
                     <option value="borrowed" disabled>Dipinjam (Otomatis)</option>
                     <option value="damaged">Rusak</option>
                     <option value="in_service">Dalam Perbaikan</option>
                     <option value="lost">Hilang (Arsip)</option>
                 </select>
+                @error('status')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Deskripsi</label>
-                <textarea name="description" id="edit_description" rows="2" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"></textarea>
+                <textarea name="description" id="edit_description" rows="2" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('description') border-red-300 @enderror"></textarea>
+                @error('description')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
             
             <div class="flex flex-col gap-2 pt-4">
@@ -150,39 +165,57 @@
         <form action="{{ route('equipments.store') }}" method="POST" class="space-y-4">
             @csrf
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Nama Alat</label>
-                <input type="text" name="name" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Contoh: Sony A7iv">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Nama Alat <span class="text-red-500">*</span></label>
+                <input type="text" name="name" value="{{ old('name') }}" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('name') border-red-300 @enderror" placeholder="Contoh: Sony A7iv">
+                @error('name')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
             
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Serial Number</label>
-                    <input type="text" name="serial_number" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="SN-123456">
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Serial Number <span class="text-red-500">*</span></label>
+                    <input type="text" name="serial_number" value="{{ old('serial_number') }}" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('serial_number') border-red-300 @enderror" placeholder="SN-123456">
+                    @error('serial_number')
+                        <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">QR Identifier</label>
-                    <input type="text" name="qr_code_identifier" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="CAM-01">
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">QR Identifier <span class="text-red-500">*</span></label>
+                    <input type="text" name="qr_code_identifier" value="{{ old('qr_code_identifier') }}" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('qr_code_identifier') border-red-300 @enderror" placeholder="CAM-01">
+                    @error('qr_code_identifier')
+                        <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Status</label>
-                <select name="status" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    <option value="available">Tersedia</option>
-                    <option value="damaged">Rusak</option>
-                    <option value="in_service">Dalam Perbaikan</option>
-                    <option value="lost">Hilang (Arsip)</option>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Status <span class="text-red-500">*</span></label>
+                <select name="status" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('status') border-red-300 @enderror">
+                    <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>Tersedia</option>
+                    <option value="damaged" {{ old('status') == 'damaged' ? 'selected' : '' }}>Rusak</option>
+                    <option value="in_service" {{ old('status') == 'in_service' ? 'selected' : '' }}>Dalam Perbaikan</option>
+                    <option value="lost" {{ old('status') == 'lost' ? 'selected' : '' }}>Hilang (Arsip)</option>
                 </select>
+                @error('status')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Kelengkapan Satu Set (Pisahkan dengan koma)</label>
-                <textarea name="accessories" rows="2" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Contoh: Baterai, Charger, Lens Cap, Bag"></textarea>
+                <textarea name="accessories" rows="2" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('accessories') border-red-300 @enderror" placeholder="Contoh: Baterai, Charger, Lens Cap, Bag">{{ old('accessories') }}</textarea>
+                @error('accessories')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Deskripsi (Opsional)</label>
-                <textarea name="description" rows="2" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Tambahkan catatan detail alat..."></textarea>
+                <textarea name="description" rows="2" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('description') border-red-300 @enderror" placeholder="Tambahkan catatan detail alat...">{{ old('description') }}</textarea>
+                @error('description')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
             
             <div class="flex flex-col gap-2 pt-4">
@@ -242,5 +275,16 @@
             }
         });
     });
+
+    // Handle validation errors by re-opening modals
+    @if($errors->any())
+        @if(old('_method') == 'PATCH')
+            // Edit modal handling would require more complex state tracking
+        @else
+            window.addEventListener('DOMContentLoaded', () => {
+                openAddModal();
+            });
+        @endif
+    @endif
 </script>
 @endsection
