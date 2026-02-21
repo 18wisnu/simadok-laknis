@@ -1,14 +1,7 @@
-node_modules
-vendor
 .git
 .env
-storage/*.key
-storage/framework/cache/data/*
-storage/framework/sessions/*
-storage/framework/views/*.php
-storage/logs/*.log
+vendor/
+node_modules/
 public/hot
 public/storage
-bootstrap/cache/*.php
-.phpunit.result.cache
-docker-compose.override.yml
+storage/logs/*
