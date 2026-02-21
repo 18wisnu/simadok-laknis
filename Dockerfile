@@ -1,43 +1,26 @@
 FROM php:8.2-fpm
 
-# Install dependencies
+# Install dependensi sistem Linux
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
     git \
     curl \
-    libzip-dev \
+    libpng-dev \
     libonig-dev \
-    libxml2-dev
+    libxml2-dev \
+    zip \
+    unzip
 
-# Clear cache
+# Bersihkan cache apt agar image lebih ringan
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install extensions
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
+# Install ekstensi PHP yang dibutuhkan Laravel
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Install Composer
+# Install Composer terbaru
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# Set folder kerja
 WORKDIR /var/www
 
-# Copy existing application directory contents
-COPY . /var/www
-
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www
-
-# Change current user to www
-USER www-data
-
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+# Beri hak akses untuk www-data (user bawaan Nginx/PHP)
+RUN chown -R www-data:www-data /var/www
