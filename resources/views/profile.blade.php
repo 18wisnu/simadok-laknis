@@ -138,6 +138,7 @@
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- Administrative Management (Superadmin Only) -->
     @if(auth()->user()->isSuperAdmin())
     <div class="space-y-3">
@@ -165,6 +166,8 @@
     </div>
     @endif
 
+=======
+>>>>>>> fitur-google-login
     <!-- Quick Logout -->
     <div class="pt-4">
         <form action="{{ route('logout') }}" method="POST">

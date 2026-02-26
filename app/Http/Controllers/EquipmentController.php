@@ -9,7 +9,7 @@ class EquipmentController extends Controller
 {
     public function index()
     {
-        $equipments = Equipment::withCount('accessories')->get();
+        $equipments = Equipment::with(['currentBorrowing.user'])->withCount('accessories')->get();
         return view('equipments.index', compact('equipments'));
         
     }

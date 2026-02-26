@@ -23,6 +23,11 @@ class Equipment extends Model
         return $this->hasMany(Accessory::class);
     }
 
+    public function currentBorrowing()
+    {
+        return $this->hasOne(Borrowing::class)->whereNull('returned_at')->latestOfMany();
+    }
+
     public function borrowings()
     {
         return $this->hasMany(Borrowing::class);
@@ -38,5 +43,10 @@ class Equipment extends Model
         return $this->hasMany(AuditLog::class, 'model_id')
                     ->where('model_type', get_class($this))
                     ->orderBy('created_at', 'desc');
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'qr_code_identifier';
     }
 }

@@ -117,4 +117,21 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', "Kata sandi untuk {$user->name} berhasil diperbarui.");
     }
+
+    public function destroy(User $user)
+    {
+        if (!auth()->user()->isSuperAdmin()) {
+            abort(403);
+        }
+
+        // Check if user is trying to delete themselves
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'Anda tidak bisa menghapus akun sendiri.');
+        }
+
+        $name = $user->name;
+        $user->delete();
+
+        return redirect()->back()->with('success', "User {$name} berhasil dihapus.");
+    }
 }

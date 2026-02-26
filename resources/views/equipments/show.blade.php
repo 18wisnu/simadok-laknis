@@ -10,16 +10,23 @@
             <div class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
                 <i class="fas fa-microchip text-3xl"></i>
             </div>
-            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase 
-                @if($equipment->status == 'available') bg-emerald-50 text-emerald-600 
-                @elseif($equipment->status == 'borrowed') bg-blue-50 text-blue-600
-                @elseif($equipment->status == 'lost') bg-red-50 text-red-600
-                @else bg-orange-50 text-orange-600 @endif">
-                @if($equipment->status == 'available') Tersedia 
-                @elseif($equipment->status == 'borrowed') Dipinjam
-                @elseif($equipment->status == 'lost') Hilang
-                @else Rusak @endif
-            </span>
+            <div class="flex items-center gap-2">
+                @if(auth()->user()->isAdmin() && !in_array($equipment->status, ['borrowed', 'in_service']))
+                <a href="{{ route('repairs.index') }}" class="bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase hover:bg-orange-600 hover:text-white transition-all">
+                    <i class="fas fa-wrench mr-1"></i> Lapor Kerusakan
+                </a>
+                @endif
+                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase 
+                    @if($equipment->status == 'available') bg-emerald-50 text-emerald-600 
+                    @elseif($equipment->status == 'borrowed') bg-blue-50 text-blue-600
+                    @elseif($equipment->status == 'lost') bg-red-50 text-red-600
+                    @else bg-orange-50 text-orange-600 @endif">
+                    @if($equipment->status == 'available') Tersedia 
+                    @elseif($equipment->status == 'borrowed') Dipinjam
+                    @elseif($equipment->status == 'lost') Hilang
+                    @else Rusak @endif
+                </span>
+            </div>
         </div>
         <h2 class="text-2xl font-bold text-gray-800">{{ $equipment->name }}</h2>
         <p class="text-sm text-gray-400 mt-1">SN: {{ $equipment->serial_number }} • QR ID: {{ $equipment->qr_code_identifier }}</p>

@@ -14,21 +14,26 @@ class DashboardController extends Controller
     {
         $activeBorrowings = Borrowing::with(['user', 'equipment'])
             ->whereNull('returned_at')
-            ->where('user_id', auth()->id())
             ->get();
 
         $today = Carbon::today();
         $upcomingSchedules = Schedule::with(['users', 'equipment'])
-            ->whereDate('starts_at', $today)
-            ->orWhere(function($query) {
-                $query->where('starts_at', '>', Carbon::now())
-                      ->where('starts_at', '<', Carbon::now()->today()->addDays(7));
+            /* @phpstan-ignore-next-line */
+            ->where(function($query) use ($today) {
+                $query->whereDate('starts_at', $today)
+                      ->orWhere(function($q) {
+                          $q->where('starts_at', '>', Carbon::now())
+                            ->where('starts_at', '<', Carbon::now()->today()->addDays(7));
+                      })
+                      ->orWhereNull('starts_at');
             })
-            ->orderBy('starts_at', 'asc')
+            ->where('result_status', 'pending')
+            ->orderByRaw('starts_at IS NULL, starts_at ASC')
             ->get();
 
         $stats = [
             'active_borrowings' => Borrowing::whereNull('returned_at')->count(),
+            'overdue_borrowings' => Borrowing::overdue()->count(),
             'available_equipment' => Equipment::where('status', 'available')->count(),
             'repair_equipment' => Equipment::where('status', 'in_service')->count(),
             'lost_equipment' => Equipment::where('status', 'lost')->count(),
