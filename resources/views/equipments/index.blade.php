@@ -128,6 +128,14 @@
             </div>
 
             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Kelengkapan</label>
+                <textarea name="description" id="edit_description" rows="2" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('description') border-red-300 @enderror"></textarea>
+                @error('description')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Deskripsi</label>
                 <textarea name="description" id="edit_description" rows="2" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"></textarea>
             </div>
@@ -213,6 +221,7 @@
     }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     function openEditEquipmentModal(equipment) {
         document.getElementById('editForm').action = `/equipments/${equipment.id}`;
         document.getElementById('edit_name').value = equipment.name;
@@ -225,6 +234,8 @@
         modal.classList.remove('hidden');
         setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
 =======
+=======
+>>>>>>> Stashed changes
     function openEditEquipmentModal(equipment, accessoriesString = '') {
     document.getElementById('editForm').action = `/equipments/${equipment.qr_code_identifier}`;
     document.getElementById('edit_name').value = equipment.name;
@@ -241,6 +252,9 @@
     const modal = document.getElementById('editModal');
     modal.classList.remove('hidden');
     setTimeout(() => modal.querySelector('.bg-white').classList.remove('scale-95'), 10);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 
@@ -251,6 +265,20 @@
     }
 <<<<<<< Updated upstream
 =======
+
+    function confirmDeleteEquipment(qr) {
+        if (confirm('Apakah Anda yakin ingin menghapus alat ini? Semua data terkait (peminjaman, perbaikan, aksesoris) akan ikut terhapus.')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/equipments/${qr}`;
+            form.innerHTML = `
+                @csrf
+                @method('DELETE')
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
 
     function confirmDeleteEquipment(qr) {
         if (confirm('Apakah Anda yakin ingin menghapus alat ini? Semua data terkait (peminjaman, perbaikan, aksesoris) akan ikut terhapus.')) {

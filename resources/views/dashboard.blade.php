@@ -309,11 +309,14 @@
 </div>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <!-- Simple Scanner Modal Placeholder -->
 <div id="scannerModal" class="fixed inset-0 z-[100] bg-black/90 hidden flex flex-col items-center justify-center p-6 text-white">
     <div class="w-full max-w-xs aspect-square border-2 border-dashed border-white/50 rounded-3xl mb-8 flex items-center justify-center overflow-hidden bg-gray-900">
         <div id="reader" width="600px"></div>
 =======
+=======
+>>>>>>> Stashed changes
 <!-- Scanner Modal -->
 <div id="scannerModal" class="fixed inset-0 z-[9999] bg-black/95 flex flex-col items-center justify-center p-6 text-white" style="display: none; pointer-events: auto;">
     <div class="w-full max-w-sm flex flex-col items-center relative z-[10000]">
@@ -359,6 +362,9 @@
         <p id="httpsWarning" class="hidden mt-6 text-[10px] text-red-400 bg-red-400/10 px-4 py-2 rounded-lg text-center font-medium">
             <i class="fas fa-triangle-exclamation mr-1"></i> Kamera butuh koneksi HTTPS (Secure)
         </p>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     </div>
 </div>
@@ -469,17 +475,30 @@
     }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     function onScanSuccess(decodedText, decodedResult) {
         // Redirect to equipment show page using the scanned QR code identifier
         window.location.href = `/equipments/${decodedText}`;
         stopScanner();
 =======
+=======
+>>>>>>> Stashed changes
     function onScanSuccess(decodedText) {
         if (decodedText.trim() !== "") {
             window.location.href = `/equipments/${encodeURIComponent(decodedText.trim())}`;
             stopScanner();
         }
 >>>>>>> Stashed changes
+    }
+
+    function handleManualSearch() {
+        const input = document.getElementById('manualQrInput');
+        const id = input.value.trim();
+        if (id) {
+            window.location.href = `/equipments/${encodeURIComponent(id)}`;
+        } else {
+            input.focus();
+        }
     }
 
     function handleManualSearch() {
