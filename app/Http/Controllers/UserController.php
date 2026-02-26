@@ -30,6 +30,7 @@ class UserController extends Controller
             'phone_number' => 'nullable|string|max:20',
             'password' => 'required|string|min:6|confirmed',
             'role' => 'required|in:staff,admin,superadmin',
+            'whatsapp_notifications' => 'boolean',
         ]);
 
         User::create([
@@ -38,6 +39,7 @@ class UserController extends Controller
             'phone_number' => $validated['phone_number'],
             'password' => bcrypt($validated['password']),
             'role' => $validated['role'],
+            'whatsapp_notifications' => $request->boolean('whatsapp_notifications'),
             'is_active' => true, // Manually created users are active by default
         ]);
 
@@ -86,9 +88,15 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone_number' => 'nullable|string|max:20',
+            'whatsapp_notifications' => 'boolean',
         ]);
 
-        $user->update($validated);
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone_number' => $validated['phone_number'],
+            'whatsapp_notifications' => $request->boolean('whatsapp_notifications'),
+        ]);
 
         return redirect()->back()->with('success', "Data user {$user->name} berhasil diperbarui.");
     }

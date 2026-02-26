@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Borrowing;
+use App\Notifications\BorrowingNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -38,9 +39,13 @@ class SendReminders extends Command
 
         foreach ($overdue as $borrow) {
             if ($borrow->user) {
-                $message = "SYSTEM NOTIF (Overdue): User {$borrow->user->name} has not returned {$borrow->equipment->name} (Due: {$borrow->expected_return_at->format('d/m/Y')})";
-                Log::channel('single')->info($message);
-                $this->info("Logged overdue notification for {$borrow->user->name}");
+                $borrow->user->notify(new BorrowingNotification(
+                    'Peringatan Terlambat!',
+                    "Satu set alat {$borrow->equipment->name} belum dikembalikan sejak " . $borrow->expected_return_at->format('d/m/Y'),
+                    $borrow->equipment->name,
+                    'overdue'
+                ));
+                $this->info("Sent overdue notification to {$borrow->user->name}");
             }
         }
 
@@ -52,9 +57,13 @@ class SendReminders extends Command
 
         foreach ($dueToday as $borrow) {
             if ($borrow->user) {
-                $message = "SYSTEM NOTIF (Due Today): User {$borrow->user->name} should return {$borrow->equipment->name} today";
-                Log::channel('single')->info($message);
-                $this->info("Logged due-today reminder for {$borrow->user->name}");
+                $borrow->user->notify(new BorrowingNotification(
+                    'Jadwal Pengembalian',
+                    "Hari ini adalah tenggat waktu pengembalian " . $borrow->equipment->name,
+                    $borrow->equipment->name,
+                    'due_today'
+                ));
+                $this->info("Sent due-today reminder to {$borrow->user->name}");
             }
         }
     }

@@ -21,6 +21,71 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/equipments/export', [EquipmentController::class, 'export'])->name('equipments.export');
     Route::resource('equipments', EquipmentController::class);
     
+<<<<<<< Updated upstream
+=======
+    // Temporary Fix Route - Remove after use
+    Route::get('/fix-db', function() {
+        try {
+            // 1. Add equipment_id to schedules if missing
+            if (!Schema::hasColumn('schedules', 'equipment_id')) {
+                Schema::table('schedules', function (Blueprint $table) {
+                    $table->foreignId('equipment_id')->nullable()->after('ends_at')->constrained('equipment')->nullOnDelete();
+                });
+                echo "Success: equipment_id added to schedules.<br>";
+            }
+
+            // 2. Make starts_at and ends_at nullable
+            Schema::table('schedules', function (Blueprint $table) {
+                $table->timestamp('starts_at')->nullable()->change();
+                $table->timestamp('ends_at')->nullable()->change();
+            });
+            echo "Success: starts_at and ends_at are now nullable.<br>";
+
+            // 3. Create notifications table if missing
+            if (!Schema::hasTable('notifications')) {
+                Schema::create('notifications', function (Blueprint $table) {
+                    $table->uuid('id')->primary();
+                    $table->string('type');
+                    $table->morphs('notifiable');
+                    $table->text('data');
+                    $table->timestamp('read_at')->nullable();
+                    $table->timestamps();
+                });
+                echo "Success: notifications table created.<br>";
+            } else {
+                echo "Info: notifications table already exists.<br>";
+            }
+
+            // 4. Add whatsapp_notifications to users table if missing
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'whatsapp_notifications')) {
+                \Illuminate\Support\Facades\Schema::table('users', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->boolean('whatsapp_notifications')->default(false)->after('is_active');
+                });
+                echo "Success: whatsapp_notifications added to users.<br>";
+            } else {
+                echo "Info: whatsapp_notifications already exists in users.<br>";
+            }
+
+            // 5. Create settings table if missing
+            if (!\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                \Illuminate\Support\Facades\Schema::create('settings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->id();
+                    $table->string('key')->unique();
+                    $table->text('value')->nullable();
+                    $table->timestamps();
+                });
+                echo "Success: settings table created.<br>";
+            } else {
+                echo "Info: settings table already exists.<br>";
+            }
+
+            return "Database fix completed successfully!";
+        } catch (\Exception $e) {
+            return "Error: " . $e->getMessage();
+        }
+    });
+
+>>>>>>> Stashed changes
     // Borrowings
     Route::post('/borrowings', [BorrowingController::class, 'store'])->name('borrowings.store');
     Route::patch('/borrowings/{borrowing}/return', [BorrowingController::class, 'return'])->name('borrowings.return');
@@ -46,6 +111,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Audit Logs
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+
+    // Notifications
+    Route::patch('/notifications/{id}/read', function($id) {
+        auth()->user()->unreadNotifications->where('id', $id)->markAsRead();
+        return back();
+    })->name('notifications.read');
+
+    // System Settings
+    Route::get('/settings', [\App\Http\Controllers\SettingController::class, 'index'])->name('settings.index');
+    Route::patch('/settings', [\App\Http\Controllers\SettingController::class, 'update'])->name('settings.update');
 });
 
 require __DIR__.'/auth.php';

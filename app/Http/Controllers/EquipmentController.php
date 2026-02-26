@@ -11,6 +11,7 @@ class EquipmentController extends Controller
     {
         $equipments = Equipment::withCount('accessories')->get();
         return view('equipments.index', compact('equipments'));
+        
     }
 
     public function show(Equipment $equipment)
@@ -55,6 +56,7 @@ class EquipmentController extends Controller
 
     public function update(Request $request, Equipment $equipment)
     {
+        // 1. Validasi inputan
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'serial_number' => 'required|string|unique:equipment,serial_number,' . $equipment->id,
@@ -63,15 +65,47 @@ class EquipmentController extends Controller
             'status' => 'required|in:available,borrowed,damaged,in_service,lost',
         ]);
 
+        // 2. Update data alat utama
         $equipment->update($validated);
 
-        return redirect()->back()->with('success', 'Data alat berhasil diperbarui');
+        // 3. Update data aksesoris/kelengkapan
+        if ($request->has('accessories')) {
+            // Hapus semua aksesoris lama di database untuk alat ini
+            $equipment->accessories()->delete();
+
+            // Pecah inputan koma jadi array dan bersihkan spasi
+            if (!empty(trim($request->accessories))) {
+                $accessoriesArray = array_filter(array_map('trim', explode(',', $request->accessories)));
+                
+                // Simpan aksesoris yang baru sebagai pengganti
+                foreach ($accessoriesArray as $accName) {
+                    if (!empty($accName)) {
+                        $equipment->accessories()->create([
+                            'name' => $accName,
+                            'is_removable' => true // Sesuaikan dengan kolom default di migrasi kamu
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', 'Data alat dan kelengkapan berhasil diperbarui!');
     }
 
-    public function printQr()
+    public function destroy(Equipment $equipment)
     {
-        $equipments = Equipment::all();
-        return view('equipments.print_qr', compact('equipments'));
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        // Manually delete related records that don't have cascade delete in migration
+        $equipment->borrowings()->delete();
+        $equipment->repairs()->delete();
+
+        // Accessories will be deleted automatically due to its migration definition
+        $equipment->delete();
+
+        return redirect()->back()->with('success', 'Alat berhasil dihapus.');
     }
 
     public function export()

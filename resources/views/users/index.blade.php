@@ -39,7 +39,7 @@
                         <i class="fas fa-envelope mr-1"></i> {{ $user->email }}
                         @if($user->phone_number)
                         <span class="mx-1 text-gray-200">|</span>
-                        <i class="fab fa-whatsapp mr-1"></i> {{ $user->phone_number }}
+                        <i class="fab fa-whatsapp mr-1 {{ $user->whatsapp_notifications ? 'text-emerald-500 font-bold' : 'text-gray-300' }}" title="{{ $user->whatsapp_notifications ? 'Notifikasi WhatsApp Aktif' : 'Notifikasi WhatsApp Mati' }}"></i> {{ $user->phone_number }}
                         @endif
                     </p>
                     <div class="flex items-center gap-2 mt-1">
@@ -49,13 +49,18 @@
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-indigo-50 text-indigo-600">
                             {{ $user->role }}
                         </span>
+                        @if($user->whatsapp_notifications)
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-600">
+                            WA ON
+                        </span>
+                        @endif
                     </div>
                 </div>
             </div>
 
             <div class="flex items-center gap-2">
                 <!-- Edit User -->
-                <button onclick="openEditUserModal({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->phone_number }}')" class="p-3 rounded-2xl bg-gray-50 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="Edit Profil">
+                <button onclick="openEditUserModal({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->phone_number }}', {{ $user->whatsapp_notifications ? 'true' : 'false' }})" class="p-3 rounded-2xl bg-gray-50 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="Edit Profil">
                     <i class="fas fa-edit"></i>
                 </button>
 
@@ -108,6 +113,10 @@
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Nomor WhatsApp</label>
                 <input type="text" name="phone_number" id="edit_phone_number" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+            </div>
+            <div class="flex items-center gap-3 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                <input type="checkbox" name="whatsapp_notifications" id="edit_whatsapp_notifications" value="1" class="w-5 h-5 rounded-lg text-emerald-600 focus:ring-emerald-500 border-gray-200">
+                <label for="edit_whatsapp_notifications" class="text-xs font-bold text-emerald-800 uppercase cursor-pointer">Aktifkan Notifikasi WhatsApp</label>
             </div>
             
             <div class="flex flex-col gap-2 pt-4">
@@ -171,6 +180,10 @@
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Nomor WhatsApp</label>
                 <input type="text" name="phone_number" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="628123456789 (Awali dengan 62)">
             </div>
+            <div class="flex items-center gap-3 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                <input type="checkbox" name="whatsapp_notifications" id="add_whatsapp_notifications" value="1" class="w-5 h-5 rounded-lg text-emerald-600 focus:ring-emerald-500 border-gray-200">
+                <label for="add_whatsapp_notifications" class="text-xs font-bold text-emerald-800 uppercase cursor-pointer">Aktifkan Notifikasi WhatsApp</label>
+            </div>
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Role</label>
                 <select name="role" required class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
@@ -213,7 +226,7 @@
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
-    function openEditUserModal(userId, name, email, phone) {
+    function openEditUserModal(userId, name, email, phone, waNotif) {
         const modal = document.getElementById('editUserModal');
         const form = document.getElementById('editUserForm');
         
@@ -221,6 +234,7 @@
         document.getElementById('edit_name').value = name;
         document.getElementById('edit_email').value = email;
         document.getElementById('edit_phone_number').value = phone || '';
+        document.getElementById('edit_whatsapp_notifications').checked = waNotif;
         
         modal.classList.remove('hidden');
         setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);

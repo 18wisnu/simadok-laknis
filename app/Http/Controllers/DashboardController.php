@@ -49,6 +49,11 @@ class DashboardController extends Controller
             $chartData['values'][] = $count;
         }
 
-        return view('dashboard', compact('activeBorrowings', 'stats', 'upcomingSchedules', 'chartData'));
+        $notifications = collect();
+        if (\Illuminate\Support\Facades\Schema::hasTable('notifications')) {
+            $notifications = auth()->user()->notifications()->latest()->take(5)->get();
+        }
+
+        return view('dashboard', compact('activeBorrowings', 'stats', 'upcomingSchedules', 'chartData', 'notifications'));
     }
 }

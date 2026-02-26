@@ -18,6 +18,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'whatsapp_notifications',
         'google_id',
         'avatar',
     ];
@@ -31,6 +32,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_active' => 'boolean',
+        'whatsapp_notifications' => 'boolean',
     ];
 
     public function borrowings()

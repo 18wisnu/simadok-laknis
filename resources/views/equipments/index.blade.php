@@ -43,6 +43,22 @@
                     <span class="text-[10px] text-gray-400">{{ $equipment->accessories_count }} kelengkapan</span>
                 </div>
             </div>
+<<<<<<< Updated upstream
+=======
+            <div class="flex items-center gap-2">
+                @if(auth()->user()->isAdmin())
+                <button onclick='openEditEquipmentModal({!! json_encode($equipment) !!})' class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center hover:bg-white hover:shadow-md hover:text-indigo-600 transition-all border border-transparent hover:border-indigo-100">
+                    <i class="fas fa-edit text-xs"></i>
+                </button>
+                <button onclick="confirmDeleteEquipment('{{ $equipment->qr_code_identifier }}')" class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100">
+                    <i class="fas fa-trash text-xs"></i>
+                </button>
+                @endif
+                <a href="{{ route('equipments.show', $equipment) }}" class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center hover:bg-shadow-lg hover:shadow-indigo-100 transition-all active:scale-90">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </a>
+            </div>
+>>>>>>> Stashed changes
         </div>
         <div class="flex items-center gap-2">
             @if(auth()->user()->isAdmin())
@@ -101,6 +117,14 @@
                     <option value="in_service">Dalam Perbaikan</option>
                     <option value="lost">Hilang (Arsip)</option>
                 </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Kelengkapan</label>
+                <textarea name="description" id="edit_description" rows="2" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm @error('description') border-red-300 @enderror"></textarea>
+                @error('description')
+                    <p class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -188,6 +212,7 @@
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
+<<<<<<< Updated upstream
     function openEditEquipmentModal(equipment) {
         document.getElementById('editForm').action = `/equipments/${equipment.id}`;
         document.getElementById('edit_name').value = equipment.name;
@@ -199,6 +224,24 @@
         const modal = document.getElementById('editModal');
         modal.classList.remove('hidden');
         setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+=======
+    function openEditEquipmentModal(equipment, accessoriesString = '') {
+    document.getElementById('editForm').action = `/equipments/${equipment.qr_code_identifier}`;
+    document.getElementById('edit_name').value = equipment.name;
+    document.getElementById('edit_serial_number').value = equipment.serial_number;
+    document.getElementById('edit_qr_code_identifier').value = equipment.qr_code_identifier;
+    document.getElementById('edit_status').value = equipment.status;
+    document.getElementById('edit_description').value = equipment.description || '';
+    
+    // KODE TAMBAHAN: Memasukkan data aksesoris ke dalam textarea
+    if (document.getElementById('edit_accessories')) {
+        document.getElementById('edit_accessories').value = accessoriesString;
+    }
+
+    const modal = document.getElementById('editModal');
+    modal.classList.remove('hidden');
+    setTimeout(() => modal.querySelector('.bg-white').classList.remove('scale-95'), 10);
+>>>>>>> Stashed changes
     }
 
     function closeEditEquipmentModal() {
@@ -206,5 +249,46 @@
         modal.querySelector('div').classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
+<<<<<<< Updated upstream
+=======
+
+    function confirmDeleteEquipment(qr) {
+        if (confirm('Apakah Anda yakin ingin menghapus alat ini? Semua data terkait (peminjaman, perbaikan, aksesoris) akan ikut terhapus.')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/equipments/${qr}`;
+            form.innerHTML = `
+                @csrf
+                @method('DELETE')
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // Search Filtering
+    document.getElementById('searchEquipment').addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('.equipment-card').forEach(card => {
+            const name = card.getAttribute('data-name');
+            if (name.includes(query)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    // Handle validation errors by re-opening modals
+    @if($errors->any())
+        @if(old('_method') == 'PATCH')
+            // Edit modal handling would require more complex state tracking
+        @else
+            window.addEventListener('DOMContentLoaded', () => {
+                openAddModal();
+            });
+        @endif
+    @endif
+>>>>>>> Stashed changes
 </script>
 @endsection

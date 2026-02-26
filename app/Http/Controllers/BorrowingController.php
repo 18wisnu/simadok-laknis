@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Borrowing;
 use App\Models\Equipment;
+use App\Notifications\BorrowingNotification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -23,7 +24,7 @@ class BorrowingController extends Controller
             return redirect()->back()->with('error', 'Alat sedang tidak tersedia.');
         }
 
-        Borrowing::create([
+        $borrowing = Borrowing::create([
             'user_id' => auth()->id(),
             'equipment_id' => $equipment->id,
             'borrowed_at' => Carbon::now(),
@@ -33,6 +34,16 @@ class BorrowingController extends Controller
         ]);
 
         $equipment->update(['status' => 'borrowed']);
+
+        // Kirim notifikasi ke user (Defensive check)
+        if (\Illuminate\Support\Facades\Schema::hasTable('notifications')) {
+            auth()->user()->notify(new BorrowingNotification(
+                'Peminjaman Berhasil',
+                'Anda telah meminjam ' . $equipment->name,
+                $equipment->name,
+                'borrow'
+            ));
+        }
 
         return redirect()->route('dashboard')->with('success', 'Peminjaman berhasil dicatat.');
     }
@@ -51,6 +62,16 @@ class BorrowingController extends Controller
 
         $status = $request->condition_on_return === 'damaged' ? 'damaged' : 'available';
         $borrowing->equipment->update(['status' => $status]);
+
+        // Kirim notifikasi ke user (Defensive check)
+        if (\Illuminate\Support\Facades\Schema::hasTable('notifications')) {
+            auth()->user()->notify(new BorrowingNotification(
+                'Pengembalian Berhasil',
+                'Anda telah mengembalikan ' . $borrowing->equipment->name,
+                $borrowing->equipment->name,
+                'return'
+            ));
+        }
 
         return redirect()->route('dashboard')->with('success', 'Pengembalian berhasil dicatat.');
     }
